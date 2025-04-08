@@ -1,0 +1,19 @@
+import com.adultsonly.AdultsOnlyDB;
+import java.sql.*;
+
+public class TestConnection {
+    public static void main(String[] args) {
+        try {
+            AdultsOnlyDB.connect();
+            ResultSet rs = AdultsOnlyDB.getAllFlights();
+
+            while (rs.next()) {
+                System.out.println(rs.getString("flight_number"));
+            }
+
+            AdultsOnlyDB.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+}
