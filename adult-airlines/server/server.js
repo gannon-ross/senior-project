@@ -1,12 +1,12 @@
-const express = require('express');
-const cors = require('cors');
-const dotenv = require('dotenv');
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import reservationRoutes from './routes/reservationRoutes.js';
+import authRoutes from './routes/auth.js';
 
 // Load environment variables
 dotenv.config({ path: './server/.env' });
 
-// Import routes
-const authRoutes = require('./routes/auth');
 
 // Initialize express app
 const app = express();
@@ -19,11 +19,15 @@ const corsOptions = {
 
 
 // Middleware
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.json());
+
+// services
+
 
 // Routes
 app.use('/api/auth', authRoutes);
+app.use('/reserve', reservationRoutes);
 
 // Health check route
 app.get('/api/health', (req, res) => {
