@@ -33,40 +33,46 @@ const Booking = () => {
   };
 
   return (
-    <div className="booking-container">
-      <h2>Book Your Flight with Adult Airlines!</h2>
+    <div className="w-full flex flex-col items-center justify-start">
+      
+      <h2 className="text-2xl font-bold mb-2">Book Your Flight with Adult Airlines!</h2>
+      <form className="flex flex-col justify-center" onSubmit={handleSearch}>
+        
+          <div className="flex items-center">
+            <label className="w-40 text-right text-md text-gray-300 px-3">Departure City:</label>
+            <input
+              className='w-40 bg-stone-400 placeholder-stone-800 text-stone-800 rounded shadow-md px-3 py-2 my-2'
+              type="text"
+              placeholder="From"
+              value={origin}
+              onChange={(e) => setOrigin(e.target.value)}
+            />
+          </div>
 
-      <form onSubmit={handleSearch}>
-        <div>
-          <label>Departure City:</label>
-          <input
-            type="text"
-            placeholder="From"
-            value={origin}
-            onChange={(e) => setOrigin(e.target.value)}
-          />
-        </div>
+          <div className="flex items-center">
+            <label className="w-40 text-right text-md text-gray-300 px-3">Destination City:</label>
+            <input
+              className='w-40 bg-stone-400 placeholder-stone-800 text-stone-800 rounded shadow-md px-3 py-2 my-2'
+              type="text"
+              placeholder="To"
+              value={destination}
+              onChange={(e) => setDestination(e.target.value)}
+            />
+          </div>
 
-        <div>
-          <label>Destination City:</label>
-          <input
-            type="text"
-            placeholder="To"
-            value={destination}
-            onChange={(e) => setDestination(e.target.value)}
-          />
-        </div>
+          <div className="flex items-center">
+            <label className="w-40 text-right text-md text-gray-300 px-3">Date:</label>
+            <input
+              className='w-40 bg-stone-400 text-stone-800 rounded shadow-md px-3 py-2 my-2' 
+              type="date"
+              value={date}
+              onChange={(e) => setDate(e.target.value)}
+            />
+          </div>
 
-        <div>
-          <label>Date:</label>
-          <input
-            type="date"
-            value={date}
-            onChange={(e) => setDate(e.target.value)}
-          />
-        </div>
-
-        <button type="submit">Search Flights</button>
+        <button 
+          className='place-self-center duration-300 w-[40%] rounded hover:cursor-pointer bg-stone-400 text-gray-300 hover:bg-stone-600 px-3 py-2 my-2'
+          type="submit">Search Flights</button>
       </form>
 
       {/* Modal for flight search results */}
@@ -96,7 +102,7 @@ const Booking = () => {
                   <div className="text-right">
                     <p className="text-lg font-semibold">${flight.price}</p>
                     <button
-                      className="mt-2 px-3 py-1 bg-blue-500 hover:bg-blue-600 text-white rounded"
+                      className="mt-2 px-3 py-1 bg-blue-500 hover:bg-blue-600 text-gray-300 rounded"
                       onClick={() => setSelectedFlight(flight)}
                     >
                       Reserve
@@ -122,7 +128,7 @@ const Booking = () => {
                 [ Payment Form Coming Soon ]
               </p>
               <button
-                className="mt-4 px-4 py-2 bg-green-500 hover:bg-green-600 text-white rounded"
+                className="mt-4 px-4 py-2 bg-green-500 hover:bg-green-600 text-gray-300 rounded"
                 onClick={async () => {
                     try {
                         // Simulate reservation after payment

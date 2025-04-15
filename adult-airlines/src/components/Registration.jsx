@@ -212,7 +212,7 @@ const Registration = () => {
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-stone-500 hover:bg-stone-600 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300"
+            className="w-full bg-stone-500 hover:bg-stone-600 text-gray-300 font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline transition duration-300"
           >
             {isSubmitting ? 'Creating Account...' : 'Create Account'}
           </button>

@@ -17,14 +17,14 @@ const Dashboard = () => {
     return (
         <div className='dashboard'>
             <div className="flex justify-between items-center p-4 bg-stone-600 mb-6">
-                <h1 className="text-xl font-bold text-white">Adult Airlines Dashboard</h1>
+                <h1 className="text-xl font-bold text-gray-300">Adult Airlines Dashboard</h1>
                 <div className="flex items-center">
-                    <span className="text-white mr-4">
+                    <span className="text-gray-300 mr-4">
                         Welcome, {user?.first_name} {user?.last_name} ({userRole})
                     </span>
                     <button
                         onClick={handleLogout}
-                        className="bg-stone-400 hover:bg-stone-500 text-white px-3 py-1 rounded"
+                        className="bg-stone-400 hover:bg-stone-500 text-gray-300 px-3 py-1 rounded"
                     >
                         Logout
                     </button>
