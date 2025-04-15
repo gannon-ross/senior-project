@@ -208,22 +208,6 @@ const Registration = () => {
           </div>
         </div>
 
-        <div>
-          <label htmlFor="role" className="block text-sm font-medium text-gray-300">
-            Account Type
-          </label>
-          <select
-            id="role"
-            name="role"
-            value={formData.role}
-            onChange={handleChange}
-            className="bg-stone-400 rounded shadow-md px-3 py-2 mt-1 w-full"
-          >
-            <option value="customer">Customer</option>
-            <option value="agent">Agent</option>
-          </select>
-        </div>
-
         <div className="pt-4">
           <button
             type="submit"
