@@ -211,22 +211,8 @@ const Booking = () => {
                 <p className="text-sm text-gray-500">
                   [ Payment Form Coming Soon ]
                 </p>
-                <button
-                  className="mt-4 px-4 py-2 bg-green-500 hover:bg-green-600 text-gray-300 rounded"
-                  onClick={async () => {
-
-                    try {
-                      // Simulate reservation after payment
-                      await flightAPI.reserveFlight(user.id, selectedFlight.id, 1);
-                      alert('Reservation successful!');
-                      setSelectedFlight(null);
-                      setShowModal(false);
-                    } catch (error) {
-                      console.error('Reservation failed:', error);
-                      alert('Failed to reserve flight.');
-                    }
-                  } }
-                >
+                <button>
+                  
                   Simulate Payment Success
                 </button>
               </div></>
