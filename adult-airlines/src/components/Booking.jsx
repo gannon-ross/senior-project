@@ -31,6 +31,30 @@ const Booking = () => {
       console.error("Flight search failed:", error);
     }
   };
+  const handlePaymentChange = (e) => {
+    const { name, value } = e.target;
+    setPaymentInfo({ ...paymentInfo, [name]: value });
+  };
+
+  const handlePaymentSubmit = async () => {
+    // Simple client-side validation for appearance
+    const { cardNumber, expiry, cvv, name, zip } = paymentInfo;
+    if (!cardNumber || !expiry || !cvv || !name || !zip) {
+      alert("Please fill out all payment fields.");
+      return;
+    }
+    try {
+      await flightAPI.reserveFlight(user.id, selectedFlight.id, 1);
+      alert("Payment approved. Reservation successful!");
+      setSelectedFlight(null);
+      setShowModal(false);
+      setShowPaymentForm(false);
+      setPaymentInfo({ cardNumber: "", expiry: "", cvv: "", name: "", zip: "" });
+    } catch (error) {
+      console.error("Reservation failed:", error);
+      alert("Failed to reserve flight.");
+    }
+  };
 
   return (
     <div className="w-full flex flex-col items-center justify-start">
@@ -122,7 +146,7 @@ const Booking = () => {
               </p>
               <p>Price: ${selectedFlight.price}</p>
 
-              {/* Placeholder for payment fields */}
+              
               {/* Placeholder for payment fields */}
               <Button
                 className="mt-4 bg-green-600 hover:bg-green-700"
