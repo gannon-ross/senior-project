@@ -123,14 +123,75 @@ const Booking = () => {
             <p>Price: ${selectedFlight.price}</p>
 
             {/* Placeholder for payment fields */}
-            <div className="mt-4">
-              <p className="text-sm text-gray-500">
-                [ Payment Form Coming Soon ]
-              </p>
-              <button
-                className="mt-4 px-4 py-2 bg-green-500 hover:bg-green-600 text-gray-300 rounded"
-                onClick={async () => {
-                    try {
+                          {/* Placeholder for payment fields */}
+              <Button
+                className="mt-4 bg-green-600 hover:bg-green-700"
+                onClick={() => setShowPayment(true)}
+              >
+                Enter Payment Info
+              </Button>
+
+              <Dialog open={showPayment} onOpenChange={setShowPayment}>
+                <DialogTitle className="text-lg font-semibold p-4">Payment Details</DialogTitle>
+                <DialogContent>
+                  <form onSubmit={handlePaymentSubmit} className="space-y-4 p-2">
+                    <Input
+                      name="cardNumber"
+                      type="text"
+                      placeholder="Card Number"
+                      maxLength={16}
+                      required
+                      onChange={handlePaymentChange}
+                      value={formData.cardNumber} />
+                    <div className="flex gap-2">
+                      <Input
+                        name="expiry"
+                        type="text"
+                        placeholder="MM/YY"
+                        maxLength={5}
+                        required
+                        onChange={handlePaymentChange}
+                        value={formData.expiry} />
+                      <Input
+                        name="cvv"
+                        type="text"
+                        placeholder="CVV"
+                        maxLength={4}
+                        required
+                        onChange={handlePaymentChange}
+                        value={formData.cvv} />
+                    </div>
+                    <Input
+                      name="name"
+                      type="text"
+                      placeholder="Name on Card"
+                      required
+                      onChange={handlePaymentChange}
+                      value={formData.name} />
+                    <Input
+                      name="zip"
+                      type="text"
+                      placeholder="Billing ZIP Code"
+                      required
+                      onChange={handlePaymentChange}
+                      value={formData.zip} />
+                    <DialogFooter className="mt-4">
+                      <Button type="submit" className="bg-blue-600 hover:bg-blue-700">
+                        Submit Payment
+                      </Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            </div><div className="mt-4">
+                <p className="text-sm text-gray-500">
+                  [ Payment Form Coming Soon ]
+                </p>
+                <button
+                  className="mt-4 px-4 py-2 bg-green-500 hover:bg-green-600 text-gray-300 rounded"
+                  onClick={async () => {
+           
+      try {
                         // Simulate reservation after payment
                         await flightAPI.reserveFlight(user.id, selectedFlight.id, 1);
                         alert('Reservation successful!');
