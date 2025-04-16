@@ -115,15 +115,15 @@ const Booking = () => {
             <p>No flights found.</p>
           )
         ) : (
-          <div className="mt-6">
-            <h3 className="text-lg font-bold mb-4">Payment for Flight</h3>
-            <p>
-              Flight: {selectedFlight.origin} ➔ {selectedFlight.destination}
-            </p>
-            <p>Price: ${selectedFlight.price}</p>
+          <><div className="mt-6">
+              <h3 className="text-lg font-bold mb-4">Payment for Flight</h3>
+              <p>
+                Flight: {selectedFlight.origin} ➔ {selectedFlight.destination}
+              </p>
+              <p>Price: ${selectedFlight.price}</p>
 
-            {/* Placeholder for payment fields */}
-                          {/* Placeholder for payment fields */}
+              {/* Placeholder for payment fields */}
+              {/* Placeholder for payment fields */}
               <Button
                 className="mt-4 bg-green-600 hover:bg-green-700"
                 onClick={() => setShowPayment(true)}
@@ -190,25 +190,24 @@ const Booking = () => {
                 <button
                   className="mt-4 px-4 py-2 bg-green-500 hover:bg-green-600 text-gray-300 rounded"
                   onClick={async () => {
-           
-      try {
-                        // Simulate reservation after payment
-                        await flightAPI.reserveFlight(user.id, selectedFlight.id, 1);
-                        alert('Reservation successful!');
-                        setSelectedFlight(null);
-                        setShowModal(false);
-                      } catch (error) {
-                        console.error('Reservation failed:', error);
-                        alert('Failed to reserve flight.');
-                      }
-                }}
-              >
-                Simulate Payment Success
-              </button>
-            </div>
-          </div>
-        )}
-      </FlightSearchModal>
+
+                    try {
+                      // Simulate reservation after payment
+                      await flightAPI.reserveFlight(user.id, selectedFlight.id, 1);
+                      alert('Reservation successful!');
+                      setSelectedFlight(null);
+                      setShowModal(false);
+                    } catch (error) {
+                      console.error('Reservation failed:', error);
+                      alert('Failed to reserve flight.');
+                    }
+                  } }
+                >
+                  Simulate Payment Success
+                </button>
+              </div></>
+        
+                )}</FlightSearchModal>
     </div>
   );
 };
