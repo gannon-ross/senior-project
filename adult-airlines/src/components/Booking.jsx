@@ -22,6 +22,8 @@ const Booking = () => {
 
   const { user } = useAuth();
 
+  const [errorMessage, setErrorMessage] = useState("");
+
   const handleSearch = async (e) => {
     e.preventDefault();
     try {
@@ -29,18 +31,25 @@ const Booking = () => {
       if (origin) params.origin = origin;
       if (destination) params.destination = destination;
       if (date) params.date = date;
-
-      // 💡 Reset previously selected flight before new search
+  
       setSelectedFlight(null);
       setShowPayment(false);
-
+  
       const results = await flightAPI.searchFlights(params);
-      setFlights(results);
-      setShowModal(true);
+  
+      if (results.length === 0) {
+        setErrorMessage("No flights found matching your search.");
+      } else {
+        setErrorMessage(""); // clear any previous errors
+        setFlights(results);
+        setShowModal(true);
+      }
     } catch (error) {
       console.error("Flight search failed:", error);
+      setErrorMessage("An error occurred during search. Please try again.");
     }
   };
+  
 
   const handlePaymentChange = (e) => {
     const { name, value } = e.target;
@@ -50,14 +59,19 @@ const Booking = () => {
   const handlePaymentSubmit = async (e) => {
     e.preventDefault();
     try {
-      console.log("RESERVE FLIGHT", user.id, selectedFlight.id, formData.passengers);
+      console.log(
+        "RESERVE FLIGHT",
+        user.id,
+        selectedFlight.id,
+        formData.passengers
+      );
 
       await flightAPI.reserveFlight(
         user.id,
         selectedFlight.id,
         parseInt(formData.passengers, 10)
       );
-      
+
       alert("Reservation successful!");
       setSelectedFlight(null);
       setShowModal(false);
@@ -119,6 +133,10 @@ const Booking = () => {
           Search Flights
         </button>
       </form>
+
+      {errorMessage && (
+        <div style={{ color: "red", marginTop: "1rem" }}>{errorMessage}</div>
+      )}
 
       <FlightSearchModal isOpen={showModal} onClose={() => setShowModal(false)}>
         {!selectedFlight ? (

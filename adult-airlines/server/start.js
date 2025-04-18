@@ -5,6 +5,10 @@ import dotenv from 'dotenv';
 import authRoutes from './routes/auth.js';
 import reservationRoutes from './routes/reservationRoutes.js';
 import flightRoutes from './routes/flightRoutes.js';
+import testEmailRoutes from './routes/testEmail.js';
+
+
+
 
 
 // Load environment variables
@@ -22,7 +26,9 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/flights', flightRoutes);
-app.use('/api/reserve', reservationRoutes); 
+app.use('/api/reserve', reservationRoutes);
+app.use('/api/test-email', testEmailRoutes);
+
 
 // Health check route
 app.get('/api/health', (req, res) => {

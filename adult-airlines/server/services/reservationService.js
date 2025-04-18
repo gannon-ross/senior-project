@@ -33,3 +33,15 @@ export async function getRandomFlight() {
     const [rows] = await pool.query('SELECT id FROM flights ORDER BY RAND() LIMIT 1');
     return rows[0];
 }
+
+export async function getReservationsByUser(userId) {
+    const [rows] = await pool.query(
+      `SELECT r.id AS reservation_id, f.origin, f.destination, f.departure_time, f.arrival_time, f.aircraft_model
+       FROM reservations r
+       JOIN flights f ON r.flight_id = f.id
+       WHERE r.user_id = ?`,
+      [userId]
+    );
+    return rows;
+  }
+  

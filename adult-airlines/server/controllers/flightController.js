@@ -14,7 +14,7 @@ export async function fetchFlights(req, res) {
         const flights = await searchFlights({flight_id, origin, destination, date});
 
         if (flights.length === 0) {
-            return res.status(404).json({ message: 'No matching flights found.'});
+            return res.status(200).json([]);
         }
 
         res.status(200).json(flights);

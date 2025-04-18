@@ -64,9 +64,14 @@ const authController = {
         role
       });
 
-      // Skip email verification for now
-      // In a real implementation, you would send an email with the verification code
-      console.log('Verification code (not sent to email):', verificationCode);
+      const emailSent = await emailService.sendVerificationEmail(user.email, user.name, verificationCode);
+
+      if (!emailSent) {
+        console.warn('Email not sent. User registered but verification pending.');
+      }
+      
+      console.log(`Verification code sent to ${user.email}: ${verificationCode}`);
+
 
       // Generate token
       const token = generateToken(user);

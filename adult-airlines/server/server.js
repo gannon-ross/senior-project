@@ -3,6 +3,9 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import reservationRoutes from './routes/reservationRoutes.js';
 import authRoutes from './routes/auth.js';
+import testEmailRoutes from './routes/testEmail.js';
+
+
 
 // Load environment variables
 dotenv.config({ path: './server/.env' });
@@ -23,7 +26,7 @@ app.use(cors(corsOptions));
 app.use(express.json());
 
 // services
-
+app.use('/api/test-email', testEmailRoutes);
 
 // Routes
 app.use('/api/auth', authRoutes);
