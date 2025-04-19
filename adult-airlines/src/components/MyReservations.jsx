@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
-import apiRequest from "../services/api";
+import { flightAPI } from "../services/api";
 
-const MyReservations = () => {
+
+const MyReservations = ({refreshKey}) => {
   const { user } = useAuth();
   const [reservations, setReservations] = useState([]);
 
@@ -12,16 +13,19 @@ const MyReservations = () => {
     const fetchReservations = async () => {
       try {
         console.log("Fetching reservations for user ID:", user.id);
-        const response = await apiRequest(`/reserve/${user.id}`);
-        console.log("Received reservations:", response.data);
+    
+        const response = await flightAPI.getReservationsByUser(user.id); // use flightAPI wrapper
+        console.log("Received reservations:", response);
+    
         setReservations(response);
       } catch (error) {
         console.error("Failed to load reservations:", error);
       }
     };
+    
   
     fetchReservations();
-  }, [user?.id]);
+  }, [user?.id, refreshKey]);
   
 
   if (reservations.length === 0) {

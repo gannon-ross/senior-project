@@ -3,7 +3,7 @@ import FlightSearchModal from "./FlightSearchModal";
 import { flightAPI } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 
-const Booking = () => {
+const Booking = ({ onReservationSuccess}) => {
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
   const [date, setDate] = useState("");
@@ -21,6 +21,8 @@ const Booking = () => {
   });
 
   const { user } = useAuth();
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const [errorMessage, setErrorMessage] = useState("");
 
@@ -58,6 +60,10 @@ const Booking = () => {
 
   const handlePaymentSubmit = async (e) => {
     e.preventDefault();
+
+    if (isSubmitting) return;
+    setIsSubmitting(true);
+
     try {
       console.log(
         "RESERVE FLIGHT",
@@ -76,9 +82,15 @@ const Booking = () => {
       setSelectedFlight(null);
       setShowModal(false);
       setShowPayment(false);
+      
+      onReservationSuccess?.();
+
+      
     } catch (error) {
       console.error("Reservation failed:", error);
       alert("Failed to reserve flight.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -269,6 +281,7 @@ const Booking = () => {
                         <button
                           type="submit"
                           className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                          disabled={isSubmitting}
                         >
                           Submit Payment
                         </button>

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import Booking from "../components/Booking";
 import Agent from "../components/Agent";
 import { useAuth } from "../context/AuthContext";
@@ -6,13 +6,18 @@ import MyReservations from "../components/MyReservations";
 
 const Dashboard = () => {
   const { user, logout } = useAuth();
-
-  // Get user role from authenticated user
   const userRole = user?.role || "customer";
+
+  // 🔁 Refresh trigger state
+  const [refreshKey, setRefreshKey] = useState(0);
 
   const handleLogout = () => {
     logout();
-    // No need to navigate, the ProtectedRoute will handle redirection
+  };
+
+  // 🔁 This gets passed to Booking and called after a reservation is made
+  const handleReservationSuccess = () => {
+    setRefreshKey((prev) => prev + 1);
   };
 
   return (
@@ -34,15 +39,15 @@ const Dashboard = () => {
         </div>
       </div>
 
-      {/* Display Booking page for customers, Agent page for agents */}
+      {/* Customer view */}
       {userRole === "customer" ? (
         <>
-          <Booking />
+          <Booking onReservationSuccess={handleReservationSuccess} />
           <div className="mt-10 px-6">
             <h2 className="text-xl font-semibold text-white mb-4">
               Your Reservations
             </h2>
-            <MyReservations />
+            <MyReservations refreshKey={refreshKey} />
           </div>
         </>
       ) : (

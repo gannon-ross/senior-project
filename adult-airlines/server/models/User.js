@@ -144,22 +144,25 @@ class User {
   static async validateCredentials(email, password) {
     try {
       const user = await this.findByEmail(email);
-
+      console.log('🔍 validateCredentials - User found:', user);
+  
       if (!user) {
+        console.log('❌ No user found for email:', email);
         return null;
       }
-
-      // Compare with password_hash (mapped to password in findByEmail)
+  
       const isPasswordValid = await bcrypt.compare(password, user.password);
-
+      console.log('🔑 Password valid?', isPasswordValid);
+  
       if (!isPasswordValid) {
+        console.log('❌ Invalid password for:', email);
         return null;
       }
-
-      // Return user without password
+  
       const { password: _, password_hash: __, ...userWithoutPassword } = user;
       return userWithoutPassword;
     } catch (error) {
+      console.error('🔥 validateCredentials error:', error);
       throw error;
     }
   }

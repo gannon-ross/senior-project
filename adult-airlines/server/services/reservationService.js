@@ -7,10 +7,10 @@ export async function getFlightById(flightId) {
 }
 
 // Create the reservation
-export async function createReservation(userId, flightId) {
+export async function createReservation(userId, flightId, agentId = null) {
     await pool.query(
-        'INSERT INTO reservations (user_id, flight_id, booking_time) VALUES (?, ?, NOW())',
-        [userId, flightId]
+        'INSERT INTO reservations (user_id, flight_id, booking_time, agent_id) VALUES (?, ?, NOW(), ?)',
+        [userId, flightId, agentId]
     );
 }
 
