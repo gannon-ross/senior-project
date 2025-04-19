@@ -1,6 +1,6 @@
 console.log('reservationRoutes loaded');
 import express from 'express';
-import { reserveFlight, getUserReservations } from '../controllers/reservationController.js';
+import { reserveFlight, getUserReservations, getAgentReservations, } from '../controllers/reservationController.js';
 
 
 const router = express.Router();
@@ -8,7 +8,9 @@ const router = express.Router();
 // POST 
 router.post('/', reserveFlight);
 // GET reservations for a specific user
-router.get('/:userId', getUserReservations);
+router.get('/user/:userId', getUserReservations);
+// Get reservations for agents
+router.get("/agent/:agentId", getAgentReservations);
 
  
 

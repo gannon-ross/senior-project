@@ -6,6 +6,7 @@ import authRoutes from './routes/auth.js';
 import reservationRoutes from './routes/reservationRoutes.js';
 import flightRoutes from './routes/flightRoutes.js';
 import testEmailRoutes from './routes/testEmail.js';
+import userRoutes from './routes/userRoutes.js';
 
 
 
@@ -20,7 +21,11 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true
+}));
+
 app.use(express.json());
 
 // Routes
@@ -28,6 +33,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/flights', flightRoutes);
 app.use('/api/reserve', reservationRoutes);
 app.use('/api/test-email', testEmailRoutes);
+app.use('/api/users', userRoutes);
 
 
 // Health check route

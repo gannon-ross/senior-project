@@ -1,10 +1,10 @@
 import * as reservationService from "../services/reservationService.js";
 import { sendEmail } from "../utils/sendEmail.js";
-import { getUserById } from "../services/userService.js";
+import { getUserById, getUserByEmail } from "../services/userService.js";
 
 // talk with frontend and validate logic
 export async function reserveFlight(req, res) {
-  let user_id, flight_id, seats_requested;
+  let user_id, flight_id, seats_requested, agent_id;
 
   try {
     // Validate input
@@ -26,6 +26,7 @@ export async function reserveFlight(req, res) {
     user_id = req.body.user_id;
     flight_id = req.body.flight_id;
     seats_requested = req.body.seats_requested;
+    agent_id  = req.body.agent_id || null; // agent ID not required
 
     //===================
 
@@ -51,7 +52,7 @@ export async function reserveFlight(req, res) {
       return res.status(400).json({ message: "Not enough seats available" });
     }
 
-    await reservationService.createReservation(user_id, flight_id);
+    await reservationService.createReservation(user_id, flight_id, agent_id, seats_requested);
     await reservationService.updateFlightSeats(flight_id, seats_requested);
 
     // Get user and flight info
@@ -130,5 +131,34 @@ async function getUserReservations(req, res) {
     res.status(500).json({ message: "Server error" });
   }
 }
-export { getUserReservations };
+
+async function getAgentReservations(req, res) {
+  const {agentId} = req.params;
+  try {
+    const reservations = await reservationService.getReservationsByAgent(agentId);
+    res.status(200).json(reservations);
+  } catch (error) {
+    console.error("Failed to fetch agent reservations", error);
+    res.status(500).json({ message: "Server error"})
+  }
+}
+
+// GET user by email
+async function getUserByEmailHandler(req, res) {
+  const { email } = req.query;
+
+  try {
+    const user = await getUserByEmail(email); // from userService
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    console.error("Failed to fetch user by email:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+
+export { getUserReservations, getAgentReservations, getUserByEmailHandler };
 
