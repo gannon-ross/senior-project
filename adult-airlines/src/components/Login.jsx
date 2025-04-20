@@ -90,7 +90,7 @@ const Login = () => {
                 <button
                     type="submit"
                     disabled={isSubmitting}
-                    className='place-self-center duration-300 w-[40%] rounded hover:cursor-pointer bg-stone-400 hover:bg-stone-600 px-3 py-2 my-2'
+                    className='place-self-center duration-300 w-[40%] rounded hover:cursor-pointer font-bold text-gray-300 bg-stone-500 hover:bg-stone-600 px-3 py-2 my-2'
                 >
                     {isSubmitting ? 'Logging in...' : 'Login'}
                 </button>
