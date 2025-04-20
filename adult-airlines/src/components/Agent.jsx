@@ -102,7 +102,7 @@ const Agent = () => {
           />
           <button
             onClick={handleSearchUser}
-            className="bg-stone-400 hover:bg-stone-500 text-stone-800 px-3 py-1 rounded"
+            className="bg-stone-400 hover:bg-stone-500 text-stone-200 px-3 py-1 rounded"
           >
             Lookup User
           </button>
@@ -114,7 +114,7 @@ const Agent = () => {
       </div>
 
       {targetUserId && (
-        <div className="mt-4">
+        <div className="flex flex-col justify-center mt-4">
           <h4 className="text-gray-300">
             Search flights to book for this user:
           </h4>
@@ -161,18 +161,19 @@ const Agent = () => {
           </div>
 
           {agentFlightResults.map((f) => (
-            <div key={f.id} className="bg-white p-3 my-2 rounded shadow">
-              <p>
+            <div key={f.id} className="bg-stone-400 text-stone-800 p-3 my-2 rounded shadow">
+              <p className="font-bold">
                 {f.origin} ➔ {f.destination}
               </p>
-              <p>Departure: {new Date(f.departure_time).toLocaleString()}</p>
+              <p className="italic">Departure: {new Date(f.departure_time).toLocaleString()}</p>
               <p>Price: ${f.price}</p>
               <div className="flex items-center gap-2 mt-2">
+                <p>Seats:</p>
                 <input
                   type="number"
                   min={1}
                   value={
-                    agentBooking.flightId === f.id && agentBooking.passengers
+                      agentBooking.flightId === f.id && agentBooking.passengers
                       ? agentBooking.passengers
                       : 1
                   }
@@ -192,7 +193,7 @@ const Agent = () => {
                         : 1;
                     handleAgentBooking(f.id, passengers);
                   }}
-                  className="bg-green-600 text-stone-800 px-3 py-1 rounded"
+                  className="font-bold bg-green-600 hover:bg-green-800 text-stone-800 px-3 py-1 rounded"
                 >
                   Book
                 </button>
@@ -207,8 +208,8 @@ const Agent = () => {
           Your Reservations
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {reservations.map((res) => (
-            <div key={res.id} className="bg-white p-4 rounded shadow">
+          {reservations.map((res) => 
+            <div key={res.id} className="bg-stone-400 p-4 rounded shadow">
               <p>
                 <strong>Flight:</strong> {res.destination}
               </p>
@@ -231,7 +232,7 @@ const Agent = () => {
                 {(res.price * res.passengers).toFixed(2)}
               </p>
             </div>
-          ))}
+          )}
         </div>
       </div>
     </div>
