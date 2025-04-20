@@ -72,8 +72,8 @@ export const authAPI = {
 export const flightAPI = {
   searchFlights: (params) => apiRequest(`/flights?${new URLSearchParams(params).toString()}`, 'GET'),
 
-  reserveFlight: (userId, flightId, seats_requested = 1, agentId = null) => 
-    apiRequest('/reserve', 'POST', { user_id: userId, flight_id: flightId, seats_requested, agent_id: agentId }, true),
+  reserveFlight: (reservationData) =>
+    apiRequest('/reserve', 'POST', reservationData, true),
 
   getReservationsByUser: (userId) =>
     apiRequest(`/reserve/user/${userId}`, 'GET', null, true),

@@ -4,15 +4,23 @@ import { getUserById, getUserByEmail } from "../services/userService.js";
 
 // talk with frontend and validate logic
 export async function reserveFlight(req, res) {
-  let user_id, flight_id, seats_requested, agent_id;
+  
 
   try {
     // Validate input
+    const user_id = Number(req.body.user_id);
+    const flight_id = Number(req.body.flight_id);
+    const seats_requested = Number(req.body.seats_requested);
+    const agent_id = req.body.agent_id || null;
+
+    // Validate input
     if (
-      typeof req.body.user_id !== "number" ||
-      typeof req.body.flight_id !== "number" ||
-      typeof req.body.seats_requested !== "number" ||
-      req.body.seats_requested <= 0
+      isNaN(user_id) ||
+      user_id <= 0 ||
+      isNaN(flight_id) ||
+      flight_id <= 0 ||
+      isNaN(seats_requested) ||
+      seats_requested <= 0
     ) {
       return res.status(400).json({
         message:
@@ -23,10 +31,6 @@ export async function reserveFlight(req, res) {
     // Future: Use real data from the frontend/search
     // (uncomment here when the search is working)
 
-    user_id = req.body.user_id;
-    flight_id = req.body.flight_id;
-    seats_requested = req.body.seats_requested;
-    agent_id  = req.body.agent_id || null; // agent ID not required
 
     //===================
 
@@ -52,7 +56,12 @@ export async function reserveFlight(req, res) {
       return res.status(400).json({ message: "Not enough seats available" });
     }
 
-    await reservationService.createReservation(user_id, flight_id, agent_id, seats_requested);
+    await reservationService.createReservation(
+      user_id,
+      flight_id,
+      agent_id,
+      seats_requested
+    );
     await reservationService.updateFlightSeats(flight_id, seats_requested);
 
     // Get user and flight info
@@ -133,13 +142,15 @@ async function getUserReservations(req, res) {
 }
 
 async function getAgentReservations(req, res) {
-  const {agentId} = req.params;
+  const { agentId } = req.params;
   try {
-    const reservations = await reservationService.getReservationsByAgent(agentId);
+    const reservations = await reservationService.getReservationsByAgent(
+      agentId
+    );
     res.status(200).json(reservations);
   } catch (error) {
     console.error("Failed to fetch agent reservations", error);
-    res.status(500).json({ message: "Server error"})
+    res.status(500).json({ message: "Server error" });
   }
 }
 
@@ -159,6 +170,4 @@ async function getUserByEmailHandler(req, res) {
   }
 }
 
-
 export { getUserReservations, getAgentReservations, getUserByEmailHandler };
-

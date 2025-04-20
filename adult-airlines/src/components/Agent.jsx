@@ -16,7 +16,7 @@ const Agent = () => {
   const [agentSearchParams, setAgentSearchParams] = useState({
     origin: "",
     destination: "",
-    date: ""
+    date: "",
   });
 
   // Load agent reservations on mount
@@ -62,14 +62,15 @@ const Agent = () => {
     }
   };
 
-  const handleAgentBooking = async () => {
+  const handleAgentBooking = async (flightId, passengers = 1) => {
     try {
-      await flightAPI.reserveFlight(
-        targetUserId,
-        agentBooking.flightId,
-        agentBooking.passengers,
-        user.id // this is the agent_id
-      );
+      await flightAPI.reserveFlight({
+        user_id: Number(targetUserId),
+        flight_id: Number(flightId),
+        seats_requested: Number(passengers),
+        agent_id: Number(user.id),
+      });
+
       alert("Reservation successful!");
     } catch (err) {
       console.error("Booking failed:", err);
@@ -114,7 +115,9 @@ const Agent = () => {
 
       {targetUserId && (
         <div className="mt-4">
-          <h4 className="text-gray-300">Search flights to book for this user:</h4>
+          <h4 className="text-gray-300">
+            Search flights to book for this user:
+          </h4>
           <div className="flex gap-2 justify-center my-2">
             <input
               placeholder="Origin"
@@ -158,7 +161,6 @@ const Agent = () => {
           </div>
 
           {agentFlightResults.map((f) => (
-            
             <div key={f.id} className="bg-white p-3 my-2 rounded shadow">
               <p>
                 {f.origin} ➔ {f.destination}
@@ -170,7 +172,9 @@ const Agent = () => {
                   type="number"
                   min={1}
                   value={
-                    agentBooking.flightId === f.id ? agentBooking.passengers : 1
+                    agentBooking.flightId === f.id && agentBooking.passengers
+                      ? agentBooking.passengers
+                      : 1
                   }
                   onChange={(e) =>
                     setAgentBooking({
@@ -181,7 +185,13 @@ const Agent = () => {
                   className="w-16 px-2 py-1 border rounded"
                 />
                 <button
-                  onClick={handleAgentBooking}
+                  onClick={() => {
+                    const passengers =
+                      agentBooking.flightId === f.id && agentBooking.passengers
+                        ? agentBooking.passengers
+                        : 1;
+                    handleAgentBooking(f.id, passengers);
+                  }}
                   className="bg-green-600 text-stone-800 px-3 py-1 rounded"
                 >
                   Book
@@ -197,7 +207,7 @@ const Agent = () => {
           Your Reservations
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {reservations.map((res) => 
+          {reservations.map((res) => (
             <div key={res.id} className="bg-white p-4 rounded shadow">
               <p>
                 <strong>Flight:</strong> {res.destination}
@@ -221,7 +231,7 @@ const Agent = () => {
                 {(res.price * res.passengers).toFixed(2)}
               </p>
             </div>
-          )}
+          ))}
         </div>
       </div>
     </div>
