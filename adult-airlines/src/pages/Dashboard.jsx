@@ -44,13 +44,14 @@ const Dashboard = () => {
         <>
           <Booking onReservationSuccess={handleReservationSuccess} />
           <div className="mt-10 px-6">
-            <h2 className="text-xl font-semibold text-white mb-4">
+            <h2 className="text-xl font-semibold text-gray-300 mb-4">
               Your Reservations
             </h2>
             <MyReservations refreshKey={refreshKey} />
           </div>
         </>
       ) : (
+      // Agent View
         <Agent />
       )}
     </div>

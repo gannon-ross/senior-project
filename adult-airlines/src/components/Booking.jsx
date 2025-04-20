@@ -196,7 +196,7 @@ const Booking = ({ onReservationSuccess}) => {
               <p>Price: ${selectedFlight.price}</p>
 
               <button
-                className="mt-4 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded"
+                className="mt-4 bg-green-600 hover:bg-green-700 text-gray-300 px-4 py-2 rounded"
                 onClick={() => setShowPayment(true)}
               >
                 Enter Payment Info
@@ -280,7 +280,7 @@ const Booking = ({ onReservationSuccess}) => {
                       <div className="flex justify-between items-center mt-4">
                         <button
                           type="submit"
-                          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+                          className="bg-blue-600 hover:bg-blue-700 text-gray-300 px-4 py-2 rounded"
                           disabled={isSubmitting}
                         >
                           Submit Payment

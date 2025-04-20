@@ -16,7 +16,7 @@ const Agent = () => {
   const [agentSearchParams, setAgentSearchParams] = useState({
     origin: "",
     destination: "",
-    date: "",
+    date: ""
   });
 
   // Load agent reservations on mount
@@ -78,30 +78,30 @@ const Agent = () => {
   };
 
   return (
-    <div className="p-6">
-      <h2 className="text-2xl font-bold text-white mb-4">Agent Dashboard</h2>
+    <div className="flex flex-col p-6">
+      <h2 className="text-2xl font-bold text-gray-300 mb-4">Agent Dashboard</h2>
 
       <div className="mb-6">
-        <h3 className="text-lg font-semibold text-white">
+        <h3 className="text-lg font-semibold text-gray-300">
           Total Sales: ${totalSales.toFixed(2)}
         </h3>
       </div>
 
       <div className="mb-6">
-        <h3 className="text-md font-semibold text-white mb-2">
+        <h3 className="text-md font-semibold text-gray-300 mb-2">
           Book a Flight for Customer
         </h3>
-        <div className="flex gap-2 mb-2">
+        <div className="flex gap-2 justify-center mb-2">
           <input
             type="email"
             placeholder="Enter customer email"
-            className="px-3 py-2 rounded w-80"
+            className="bg-stone-400 text-stone-800 placeholder:text-stone-800 px-3 py-2 rounded w-60"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
           />
           <button
             onClick={handleSearchUser}
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded"
+            className="bg-stone-400 hover:bg-stone-500 text-stone-800 px-3 py-1 rounded"
           >
             Lookup User
           </button>
@@ -114,11 +114,11 @@ const Agent = () => {
 
       {targetUserId && (
         <div className="mt-4">
-          <h4 className="text-white">Search flights to book for this user:</h4>
-          <div className="flex gap-2 my-2">
+          <h4 className="text-gray-300">Search flights to book for this user:</h4>
+          <div className="flex gap-2 justify-center my-2">
             <input
               placeholder="Origin"
-              className="px-2 py-1 rounded"
+              className="bg-stone-400 text-stone-800 placeholder:text-stone-800 px-2 py-1 rounded"
               value={agentSearchParams.origin}
               onChange={(e) =>
                 setAgentSearchParams({
@@ -129,7 +129,7 @@ const Agent = () => {
             />
             <input
               placeholder="Destination"
-              className="px-2 py-1 rounded"
+              className="bg-stone-400 text-stone-800 placeholder:text-stone-800 px-2 py-1 rounded"
               value={agentSearchParams.destination}
               onChange={(e) =>
                 setAgentSearchParams({
@@ -140,7 +140,7 @@ const Agent = () => {
             />
             <input
               type="date"
-              className="px-2 py-1 rounded"
+              className="w-40 bg-stone-400 text-stone-800 rounded shadow-md px-2 py-1 rounded"
               value={agentSearchParams.date}
               onChange={(e) =>
                 setAgentSearchParams({
@@ -151,13 +151,14 @@ const Agent = () => {
             />
             <button
               onClick={handleFlightSearch}
-              className="bg-stone-600 text-white px-3 py-1 rounded"
+              className="bg-stone-400 hover:bg-stone-500 text-gray-300 px-3 py-1 rounded"
             >
               Search
             </button>
           </div>
 
           {agentFlightResults.map((f) => (
+            
             <div key={f.id} className="bg-white p-3 my-2 rounded shadow">
               <p>
                 {f.origin} ➔ {f.destination}
@@ -181,7 +182,7 @@ const Agent = () => {
                 />
                 <button
                   onClick={handleAgentBooking}
-                  className="bg-green-600 text-white px-3 py-1 rounded"
+                  className="bg-green-600 text-stone-800 px-3 py-1 rounded"
                 >
                   Book
                 </button>
@@ -192,7 +193,7 @@ const Agent = () => {
       )}
 
       <div>
-        <h3 className="text-lg font-semibold text-white mb-3">
+        <h3 className="text-lg font-semibold text-gray-300 mb-3">
           Your Reservations
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
