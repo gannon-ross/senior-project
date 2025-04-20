@@ -3,7 +3,7 @@ import FlightSearchModal from "./FlightSearchModal";
 import { flightAPI } from "../services/api";
 import { useAuth } from "../context/AuthContext";
 
-const Booking = ({ onReservationSuccess}) => {
+const Booking = ({ onReservationSuccess }) => {
   const [origin, setOrigin] = useState("");
   const [destination, setDestination] = useState("");
   const [date, setDate] = useState("");
@@ -11,6 +11,7 @@ const Booking = ({ onReservationSuccess}) => {
   const [showModal, setShowModal] = useState(false);
   const [selectedFlight, setSelectedFlight] = useState(null);
   const [showPayment, setShowPayment] = useState(false);
+  const today = new Date().toISOString().split("T")[0];
   const [formData, setFormData] = useState({
     payment_card: "",
     expiry: "",
@@ -33,12 +34,12 @@ const Booking = ({ onReservationSuccess}) => {
       if (origin) params.origin = origin;
       if (destination) params.destination = destination;
       if (date) params.date = date;
-  
+
       setSelectedFlight(null);
       setShowPayment(false);
-  
+
       const results = await flightAPI.searchFlights(params);
-  
+
       if (results.length === 0) {
         setErrorMessage("No flights found matching your search.");
       } else {
@@ -51,7 +52,6 @@ const Booking = ({ onReservationSuccess}) => {
       setErrorMessage("An error occurred during search. Please try again.");
     }
   };
-  
 
   const handlePaymentChange = (e) => {
     const { name, value } = e.target;
@@ -60,6 +60,35 @@ const Booking = ({ onReservationSuccess}) => {
 
   const handlePaymentSubmit = async (e) => {
     e.preventDefault();
+
+    const validFormat = /^\d{2}\/\d{2}$/;
+    if (!validFormat.test(formData.expiry)) {
+      alert("Expiration must be in MM/YY format.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    const [expMonth, expYear] = formData.expiry.split("/");
+    const currentDate = new Date();
+    const expMonthNum = parseInt(expMonth, 10);
+
+
+    // Set expiration to the last day of the month, 23:59:59
+    const expDate = new Date(`20${expYear}`, expMonth, 0); // day 0 = last day of prev month
+    expDate.setHours(23, 59, 59, 999);
+
+    if (
+      !expMonthNum ||
+      isNaN(expMonthNum) ||
+      !expYear ||
+      isNaN(parseInt(expYear, 10)) ||
+      expDate < currentDate
+    ) {
+      alert("Credit card is expired. Please use a valid expiration date.");
+      setIsSubmitting(false);
+      return;
+    }
+    
 
     if (isSubmitting) return;
     setIsSubmitting(true);
@@ -72,20 +101,18 @@ const Booking = ({ onReservationSuccess}) => {
         formData.passengers
       );
 
-      await flightAPI.reserveFlight(
-        user.id,
-        selectedFlight.id,
-        parseInt(formData.passengers, 10)
-      );
+      await flightAPI.reserveFlight({
+        user_id: user.id,
+        flight_id: selectedFlight.id,
+        seats_requested: parseInt(formData.passengers, 10),
+      });
 
       alert("Reservation successful!");
       setSelectedFlight(null);
       setShowModal(false);
       setShowPayment(false);
-      
-      onReservationSuccess?.();
 
-      
+      onReservationSuccess?.();
     } catch (error) {
       console.error("Reservation failed:", error);
       alert("Failed to reserve flight.");
@@ -134,6 +161,7 @@ const Booking = ({ onReservationSuccess}) => {
             className="w-40 bg-stone-400 text-stone-800 rounded shadow-md px-3 py-2 my-2"
             type="date"
             value={date}
+            min={today}
             onChange={(e) => setDate(e.target.value)}
           />
         </div>
@@ -230,7 +258,7 @@ const Booking = ({ onReservationSuccess}) => {
                         maxLength={16}
                         required
                         onChange={handlePaymentChange}
-                        value={formData.cardNumber}
+                        value={formData.payment_card}
                         className="w-full px-3 py-2 border rounded"
                       />
                       <div className="flex gap-2">
