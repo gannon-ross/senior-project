@@ -167,7 +167,7 @@ const Booking = ({ onReservationSuccess }) => {
         </div>
 
         <button
-          className="place-self-center duration-300 w-[40%] rounded hover:cursor-pointer bg-stone-400 text-gray-300 hover:bg-stone-600 px-3 py-2 my-2"
+          className="place-self-center duration-300 w-[40%] rounded hover:cursor-pointer bg-stone-400 text-stone-100 hover:bg-stone-500 px-3 py-2 my-2"
           type="submit"
         >
           Search Flights
@@ -184,7 +184,7 @@ const Booking = ({ onReservationSuccess }) => {
             flights.map((flight) => (
               <div
                 key={flight.id}
-                className="flight-card border p-4 rounded-lg mb-4 shadow-md bg-white"
+                className="flight-card bg-stone-400 text-stone-800 border p-4 rounded-lg mb-4 shadow-md"
               >
                 <div className="flex justify-between">
                   <div>
@@ -202,7 +202,7 @@ const Booking = ({ onReservationSuccess }) => {
                   <div className="text-right">
                     <p className="text-lg font-semibold">${flight.price}</p>
                     <button
-                      className="mt-2 px-3 py-1 bg-blue-500 hover:bg-blue-600 text-gray-300 rounded"
+                      className="mt-2 px-3 py-1 bg-stone-600 hover:bg-stone-500 text-stone-100 rounded"
                       onClick={() => setSelectedFlight(flight)}
                     >
                       Reserve
@@ -216,15 +216,17 @@ const Booking = ({ onReservationSuccess }) => {
           )
         ) : (
           <>
-            <div className="mt-6">
-              <h3 className="text-lg font-bold mb-4">Payment for Flight</h3>
-              <p>
+            <div className="font-bold mb-4 mt-2">
+              <h3 className="text-lg text-stone-300">Payment for Flight</h3>
+              <p className="text-sm text-stone-800">
                 Flight: {selectedFlight.origin} ➔ {selectedFlight.destination}
               </p>
-              <p>Price: ${selectedFlight.price}</p>
+              <p className="text-sm text-stone-800">
+                Price: ${selectedFlight.price}
+              </p>
 
               <button
-                className="mt-4 bg-green-600 hover:bg-green-700 text-gray-300 px-4 py-2 rounded"
+                className="mt-2 bg-stone-400 hover:bg-stone-500 text-gray-300 px-4 py-2 rounded"
                 onClick={() => setShowPayment(true)}
               >
                 Enter Payment Info
@@ -232,7 +234,7 @@ const Booking = ({ onReservationSuccess }) => {
 
               {showPayment && (
                 <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-                  <div className="bg-white p-6 rounded shadow-lg w-full max-w-md">
+                  <div className="bg-stone-600 text-stone-200 p-6 rounded shadow-lg w-full max-w-md">
                     <h2 className="text-xl font-bold mb-4">Payment Details</h2>
                     <form
                       onSubmit={handlePaymentSubmit}
@@ -242,13 +244,13 @@ const Booking = ({ onReservationSuccess }) => {
                       <input
                         name="passengers"
                         type="number"
-                        min="1"
                         placeholder="Number of Passengers"
                         required
                         onChange={handlePaymentChange}
                         value={formData.passengers}
                         className="w-full px-3 py-2 border rounded"
                       />
+                      <p className="text-sm text-stone-200"></p>
 
                       <input
                         name="payment_card"
@@ -308,7 +310,7 @@ const Booking = ({ onReservationSuccess }) => {
                       <div className="flex justify-between items-center mt-4">
                         <button
                           type="submit"
-                          className="bg-blue-600 hover:bg-blue-700 text-gray-300 px-4 py-2 rounded"
+                          className="bg-green-600 hover:bg-green-700 text-gray-300 px-4 py-2 rounded"
                           disabled={isSubmitting}
                         >
                           Submit Payment
@@ -316,7 +318,7 @@ const Booking = ({ onReservationSuccess }) => {
                         <button
                           type="button"
                           onClick={() => setShowPayment(false)}
-                          className="text-gray-600 underline"
+                          className="bg-stone-400 hover:bg-stone-500 text-gray-300 px-2 py-2 rounded"
                         >
                           Cancel
                         </button>

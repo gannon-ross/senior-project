@@ -35,22 +35,33 @@ const MyReservations = ({refreshKey}) => {
   return (
     <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3 mt-6">
       {reservations.map((res) => (
+        
         <div
           key={res.reservation_id}
-          className="bg-white rounded-lg shadow-md p-4"
+          className="flex flex-col bg-stone-400 text-stone-200 rounded-lg shadow-md p-4"
         >
-          <h3 className="font-bold text-lg mb-2">
+          {console.log(res)}
+          <h3 className="font-bold text-stone-600 text-lg mb-2">
             {res.origin} → {res.destination}
           </h3>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm">
             Departure: {new Date(res.departure_time).toLocaleString()}
           </p>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm">
             Arrival: {new Date(res.arrival_time).toLocaleString()}
           </p>
-          <p className="text-sm text-gray-600 mt-2">
+          <p className="text-sm italic mt-2">
             Aircraft: {res.aircraft_model}
           </p>
+          <div className="flex justify-center mt-4 gap-4">
+            <p className="text-sm font-bold mt-2">
+              Cancel Flight?
+            </p>
+            <button 
+              className="bg-stone-600 hover:bg-stone-500 text-stone-200 px-3 py-1 rounded">
+              &times;
+            </button>
+          </div>
         </div>
       ))}
     </div>

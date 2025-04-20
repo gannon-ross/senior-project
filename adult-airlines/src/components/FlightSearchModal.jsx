@@ -20,11 +20,11 @@ function FlightSearchModal({ isOpen, onClose, children }) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-2xl relative overflow-hidden">
+    <div className="fixed inset-0 bg-black flex justify-center items-center z-50">
+      <div className="bg-stone-600 rounded-lg p-6 w-full max-w-2xl relative overflow-hidden">
         
         {/* Sticky Top (Title + Close) */}
-        <div className="sticky top-0 bg-white flex justify-between items-center border-b p-4">
+        <div className="sticky top-0 bg-stone-600 flex justify-between items-center border-b p-4">
           <h2 className="text-xl font-bold">Available Flights</h2>
           <button
             className="text-gray-500 hover:text-gray-800"
