@@ -28,3 +28,13 @@ export async function searchFlights({flight_id, origin, destination, date}) {
     return rows;
     
 }
+
+// Flexible flight cancellation - works for agents and for customers
+export async function cancelFlight({reservationId}) {
+    let baseQuery = 'DELETE FROM reservations WHERE id = ?';
+    const params = [reservationId];
+
+    const [ack] = await pool.query(baseQuery, params);
+    console.log(ack);
+    return ack;
+}

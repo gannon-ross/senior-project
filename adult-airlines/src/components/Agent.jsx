@@ -19,20 +19,20 @@ const Agent = () => {
     date: "",
   });
 
+  const fetchAgentReservations = async () => {
+    try {
+      const data = await flightAPI.getReservationsByAgent(user.id);
+      setReservations(data);
+    } catch (err) {
+      console.error("Error fetching reservations:", err);
+      setError("Failed to load reservations");
+    }
+  };
   // Load agent reservations on mount
   useEffect(() => {
-    const fetchAgentReservations = async () => {
-      try {
-        const data = await flightAPI.getReservationsByAgent(user.id);
-        setReservations(data);
-      } catch (err) {
-        console.error("Error fetching reservations:", err);
-        setError("Failed to load reservations");
-      }
-    };
-
+    console.log("REEEE RENDER")
     fetchAgentReservations();
-  }, [user.id]);
+  }, []);
 
   // Calculate total sales
   const totalSales = reservations.reduce(
@@ -70,6 +70,19 @@ const Agent = () => {
         seats_requested: Number(passengers),
         agent_id: Number(user.id),
       });
+
+      // Reset state of search parameters
+      setAgentSearchParams({
+        origin: "",
+        destination: "",
+        date: "",
+      });
+
+      // Reset state of flight results
+      setAgentFlightResults([]);
+
+      // Refresh state for agent reservation list
+      fetchAgentReservations();
 
       alert("Reservation successful!");
     } catch (err) {
@@ -160,6 +173,7 @@ const Agent = () => {
             </button>
           </div>
 
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {agentFlightResults.map((f) => (
             <div key={f.id} className="bg-stone-400 text-stone-800 p-3 my-2 rounded shadow">
               <p className="font-bold">
@@ -200,6 +214,7 @@ const Agent = () => {
               </div>
             </div>
           ))}
+          </div>
         </div>
       )}
 
@@ -209,6 +224,7 @@ const Agent = () => {
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {reservations.map((res) => 
+            
             <div key={res.id} className="bg-stone-400 p-4 rounded shadow">
               <p>
                 <strong>Flight:</strong> {res.destination}
@@ -231,6 +247,19 @@ const Agent = () => {
                 <strong>Total:</strong> $
                 {(res.price * res.passengers).toFixed(2)}
               </p>
+              <div className="flex justify-center">
+                <p className="text-sm font-bold mt-2 px-2">
+                  Cancel Flight?
+                </p>
+                <button
+                
+                    // No logic for Agent cancel has been put in yet, this button does nothing
+                  
+                  onClick={() => {console.log("Flight cancelled.")}}
+                  className="bg-stone-600 hover:bg-stone-500 text-stone-200 px-3 py-1 rounded">
+                  &times;
+                </button>
+              </div>
             </div>
           )}
         </div>

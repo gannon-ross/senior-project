@@ -23,10 +23,10 @@ const MyReservations = ({refreshKey}) => {
       }
     };
     
-  
     fetchReservations();
   }, [user?.id, refreshKey]);
-  
+
+
 
   if (reservations.length === 0) {
     return <p className="text-gray-400 mt-4">You have no reservations yet.</p>;
@@ -40,7 +40,6 @@ const MyReservations = ({refreshKey}) => {
           key={res.reservation_id}
           className="flex flex-col bg-stone-400 text-stone-200 rounded-lg shadow-md p-4"
         >
-          {console.log(res)}
           <h3 className="font-bold text-stone-600 text-lg mb-2">
             {res.origin} → {res.destination}
           </h3>
@@ -57,7 +56,13 @@ const MyReservations = ({refreshKey}) => {
             <p className="text-sm font-bold mt-2">
               Cancel Flight?
             </p>
-            <button 
+            <button
+              onClick={() => {
+                // Cancel attempt does not work - 
+                // POST request 404s
+                // Fails parsing of JSON from response?
+                flightAPI.cancelFlight(res.reservation_id);
+                console.log("Flight cancelled.")}}
               className="bg-stone-600 hover:bg-stone-500 text-stone-200 px-3 py-1 rounded">
               &times;
             </button>
