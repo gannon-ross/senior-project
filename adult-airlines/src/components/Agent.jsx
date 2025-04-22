@@ -28,9 +28,9 @@ const Agent = () => {
       setError("Failed to load reservations");
     }
   };
+
   // Load agent reservations on mount
   useEffect(() => {
-    console.log("REEEE RENDER")
     fetchAgentReservations();
   }, []);
 
@@ -252,10 +252,11 @@ const Agent = () => {
                   Cancel Flight?
                 </p>
                 <button
-                
-                    // No logic for Agent cancel has been put in yet, this button does nothing
-                  
-                  onClick={() => {console.log("Flight cancelled.")}}
+                  onClick={() => {
+                    flightAPI.cancelFlight(res.id);
+                    alert("Reservation cancelled!");
+                    fetchAgentReservations();
+                  }}
                   className="bg-stone-600 hover:bg-stone-500 text-stone-200 px-3 py-1 rounded">
                   &times;
                 </button>

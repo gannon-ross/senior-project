@@ -94,12 +94,13 @@ const Booking = ({ onReservationSuccess }) => {
     setIsSubmitting(true);
 
     try {
-      console.log(
-        "RESERVE FLIGHT",
-        user.id,
-        selectedFlight.id,
-        formData.passengers
-      );
+      // Uncomment if reservation system is not working to view passed parameters
+      // console.log(
+      //   "RESERVE FLIGHT",
+      //   user.id,
+      //   selectedFlight.id,
+      //   formData.passengers
+      // );
 
       await flightAPI.reserveFlight({
         user_id: user.id,

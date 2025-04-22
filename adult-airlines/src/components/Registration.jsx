@@ -85,11 +85,7 @@ const Registration = () => {
 
       // Remove confirmPassword before sending to API
       const { confirmPassword, ...registrationData } = formData;
-
-      console.log('Submitting registration data:', registrationData);
-
       const response = await register(registrationData);
-      console.log('Registration successful:', response);
 
       // Redirect to verification page
       navigate('/verify-email');

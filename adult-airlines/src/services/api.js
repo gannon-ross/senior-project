@@ -74,11 +74,10 @@ export const flightAPI = {
 
   reserveFlight: (reservationData) =>
     apiRequest('/reserve', 'POST', reservationData, true),
-
-  // I am not sure this works
+  
   cancelFlight: (reservationId) =>
-    apiRequest(`/reserve/cancel/${reservationId}`, 'POST', null, true),
-
+    apiRequest(`/reserve/${reservationId}`, 'DELETE', null, true),
+  
   getReservationsByUser: (userId) =>
     apiRequest(`/reserve/user/${userId}`, 'GET', null, true),
 

@@ -109,13 +109,13 @@ export async function reserveFlight(req, res) {
     }
 
     // Console output to check the random DB placement
-    console.log("-------------------------");
-    console.log("Reservation created!");
-    console.log("Go check in your DB:");
-    console.log(
-      `Select * From reservations WHERE user_id = ${user_id} AND flight_id = ${flight_id}`
-    );
-    console.log("--------------------------");
+    // console.log("-------------------------");
+    // console.log("Reservation created!");
+    // console.log("Go check in your DB:");
+    // console.log(
+    //   `Select * From reservations WHERE user_id = ${user_id} AND flight_id = ${flight_id}`
+    // );
+    // console.log("--------------------------");
 
     res.status(201).json({
       message: "Reservation successful",
@@ -133,7 +133,6 @@ async function getUserReservations(req, res) {
   const { userId } = req.params;
   try {
     const reservations = await reservationService.getReservationsByUser(userId);
-    console.log("Reservations returned to frontend:", reservations);
     res.status(200).json(reservations);
   } catch (error) {
     console.error("Failed to fetch reservations:", error);
@@ -170,4 +169,17 @@ async function getUserByEmailHandler(req, res) {
   }
 }
 
-export { getUserReservations, getAgentReservations, getUserByEmailHandler };
+// DELETE reservation by ID
+async function cancelReservation(req, res) {
+  const { reservationId } = req.params;
+
+  try {
+    await reservationService.cancelReservationById(reservationId);
+    res.status(200).json({ message: `Reservation ${reservationId} cancelled succesfully`});
+  } catch (error) {
+    console.error("Failed to cancel reservation:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+export { getUserReservations, getAgentReservations, getUserByEmailHandler, cancelReservation };

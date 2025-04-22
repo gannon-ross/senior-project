@@ -69,9 +69,6 @@ const authController = {
       if (!emailSent) {
         console.warn('Email not sent. User registered but verification pending.');
       }
-      
-      console.log(`Verification code sent to ${user.email}: ${verificationCode}`);
-
 
       // Generate token
       const token = generateToken(user);

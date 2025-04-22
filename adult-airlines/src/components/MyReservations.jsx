@@ -7,24 +7,19 @@ const MyReservations = ({refreshKey}) => {
   const { user } = useAuth();
   const [reservations, setReservations] = useState([]);
 
+  const fetchReservations = async () => {
+    try {
+      const response = await flightAPI.getReservationsByUser(user.id); // use flightAPI wrapper
+      setReservations(response);
+    } catch (error) {
+      console.error("Failed to load reservations:", error);
+    }
+  };
+
   useEffect(() => {
     if (!user?.id) return; // Wait for user to be defined
-  
-    const fetchReservations = async () => {
-      try {
-        console.log("Fetching reservations for user ID:", user.id);
-    
-        const response = await flightAPI.getReservationsByUser(user.id); // use flightAPI wrapper
-        console.log("Received reservations:", response);
-    
-        setReservations(response);
-      } catch (error) {
-        console.error("Failed to load reservations:", error);
-      }
-    };
-    
     fetchReservations();
-  }, [user?.id, refreshKey]);
+  }, [refreshKey]);
 
 
 
@@ -58,11 +53,10 @@ const MyReservations = ({refreshKey}) => {
             </p>
             <button
               onClick={() => {
-                // Cancel attempt does not work - 
-                // POST request 404s
-                // Fails parsing of JSON from response?
                 flightAPI.cancelFlight(res.reservation_id);
-                console.log("Flight cancelled.")}}
+                fetchReservations();
+                alert(`Reservation cancelled!`);
+              }}
               className="bg-stone-600 hover:bg-stone-500 text-stone-200 px-3 py-1 rounded">
               &times;
             </button>

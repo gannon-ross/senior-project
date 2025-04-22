@@ -14,6 +14,14 @@ export async function createReservation(userId, flightId, agentId = null, passen
     );
 }
 
+// Cancel (delete) a reservation
+export async function cancelReservationById(reservationId) {
+    await pool.query(
+        'DELETE FROM reservations WHERE id = ?', 
+        [reservationId]
+    );    
+}
+
 // Update number of seats available on the flight
 export async function updateFlightSeats(flightId, seatsToSubtract) {
     await pool.query(

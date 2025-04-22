@@ -1,4 +1,3 @@
-console.log('reservationRoutes loaded');
 import express from 'express';
 import { reserveFlight, getUserReservations, getAgentReservations, cancelReservation } from '../controllers/reservationController.js';
 
@@ -12,7 +11,7 @@ router.get('/user/:userId', getUserReservations);
 // Get reservations for agents
 router.get("/agent/:agentId", getAgentReservations);
 // Cancel reservations
-router.post("/cancel/:reservationId", cancelReservation);
+router.delete("/:reservationId", cancelReservation);
 
  
 
