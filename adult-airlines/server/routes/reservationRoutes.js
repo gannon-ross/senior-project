@@ -5,7 +5,8 @@ import {
     getAgentReservations,
     cancelReservation,
     getAlternativeFlights,
-    updateReservationFlight
+    updateReservationFlight,
+    cancelEntireFlight
   } from '../controllers/reservationController.js';
 
 
@@ -25,6 +26,8 @@ router.get("/alternatives/:reservationId", getAlternativeFlights);
 router.post('/update-flight', updateReservationFlight);
 // GET alternative flights
 router.get('/alternatives/:reservationId', getAlternativeFlights);
+// DELETE an entire flight
+router.post('/cancel', cancelEntireFlight);
 
  
 

@@ -15,8 +15,6 @@ import userRoutes from './routes/userRoutes.js';
 // Load environment variables
 dotenv.config();
 
-// Routes already imported at the top
-
 // Initialize express app
 const app = express();
 

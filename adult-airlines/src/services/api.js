@@ -100,6 +100,10 @@ export const flightAPI = {
     return response;
   },
 
+  cancelEntireFlight: (flightId) =>
+    apiRequest('/reserve/cancel', 'POST', { flight_id: flightId }, true),
+  
+
 }
 
 export default apiRequest;

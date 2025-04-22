@@ -97,6 +97,26 @@ export async function getReservationById(reservationId) {
     );
     return rows;
   }
+  export async function getReservationByFlight(flight_id) {
+    const [rows] = await pool.query(
+      `SELECT r.*, f.origin, f.destination, f.flight_number, f.departure_time
+       FROM reservations r
+       JOIN flights f ON r.flight_id = f.id
+       WHERE r.flight_id = ?`,
+      [flight_id]
+    );  
+    return rows;
+  }
+  
+  export async function deleteReservationsByFlight(flight_id) {
+    const [result] = await pool.query(
+      'DELETE FROM reservations WHERE flight_id = ?',
+      [flight_id]
+    );
+    return result;
+  }
+  
+  
 
   export async function updateReservationFlight(reservationId, newFlightId) {
     await pool.query(

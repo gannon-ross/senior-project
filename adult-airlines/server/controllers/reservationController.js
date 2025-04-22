@@ -1,11 +1,11 @@
 import * as reservationService from "../services/reservationService.js";
+import * as flightService from "../services/flightService.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { getUserById, getUserByEmail } from "../services/userService.js";
+import { send } from "vite";
 
 // talk with frontend and validate logic
 export async function reserveFlight(req, res) {
-  
-
   try {
     // Validate input
     const user_id = Number(req.body.user_id);
@@ -30,7 +30,6 @@ export async function reserveFlight(req, res) {
     //=============
     // Future: Use real data from the frontend/search
     // (uncomment here when the search is working)
-
 
     //===================
 
@@ -64,9 +63,10 @@ export async function reserveFlight(req, res) {
     );
     await reservationService.updateFlightSeats(flight_id, seats_requested);
 
-    const formattedBookingTime = new Date(reservation.booking_time).toLocaleString();
+    const formattedBookingTime = new Date(
+      reservation.booking_time
+    ).toLocaleString();
     const totalPrice = flight.price * seats_requested;
-
 
     // Get user and flight info
     const user = await getUserById(user_id);
@@ -93,8 +93,12 @@ export async function reserveFlight(req, res) {
         subject: "Your Adult Airlines Booking Confirmation",
         html: `
           <h2>✈️ Reservation Confirmed!</h2>
-          <p><strong>Passenger Name:</strong> ${user.name?.trim() || "Passenger"}</p>
-          <p><strong>Flight:</strong> ${flight.origin} → ${flight.destination}</p>
+          <p><strong>Passenger Name:</strong> ${
+            user.name?.trim() || "Passenger"
+          }</p>
+          <p><strong>Flight:</strong> ${flight.origin} → ${
+          flight.destination
+        }</p>
           <p><strong>Date:</strong> ${formattedDate}</p>
           <p><strong>Flight ID:</strong> ${flight_id}</p>
           <p><strong>Passengers:</strong> ${seats_requested}</p>
@@ -104,7 +108,6 @@ export async function reserveFlight(req, res) {
           <p>Thank you for booking with <strong>Adult Airlines</strong>!</p>
         `,
       });
-      
 
       console.log("Confirmation email sent");
     } catch (emailError) {
@@ -178,7 +181,9 @@ async function cancelReservation(req, res) {
 
   try {
     await reservationService.cancelReservationById(reservationId);
-    res.status(200).json({ message: `Reservation ${reservationId} cancelled succesfully`});
+    res
+      .status(200)
+      .json({ message: `Reservation ${reservationId} cancelled succesfully` });
   } catch (error) {
     console.error("Failed to cancel reservation:", error);
     res.status(500).json({ message: "Server error" });
@@ -190,7 +195,9 @@ async function getAlternativeFlights(req, res) {
 
   try {
     // Step 1: Get the original reservation
-    const reservationRows = await reservationService.getReservationById(reservationId);
+    const reservationRows = await reservationService.getReservationById(
+      reservationId
+    );
     const reservation = reservationRows[0];
 
     if (!reservation) {
@@ -198,9 +205,12 @@ async function getAlternativeFlights(req, res) {
     }
     console.log("Finding alternatives for reservation ID:", reservationId);
     console.log("Found reservation:", reservation);
-    console.log("Fetching alternatives with origin:", reservation.origin, "destination:", reservation.destination);
-
-
+    console.log(
+      "Fetching alternatives with origin:",
+      reservation.origin,
+      "destination:",
+      reservation.destination
+    );
 
     // Step 2: Look up flights with the same origin and destination
     const alternatives = await reservationService.findAlternativeFlights({
@@ -215,26 +225,37 @@ async function getAlternativeFlights(req, res) {
     res.status(500).json({ message: "Server error" });
   }
 }
+
 async function updateReservationFlight(req, res) {
   const { reservation_id, new_flight_id } = req.body;
 
   try {
     // 1. Get reservation + user
-    const reservationRows = await reservationService.getReservationById(reservation_id);
+    const reservationRows = await reservationService.getReservationById(
+      reservation_id
+    );
     const reservation = reservationRows[0];
 
-    if (!reservation) return res.status(404).json({ message: "Reservation not found" });
+    if (!reservation)
+      return res.status(404).json({ message: "Reservation not found" });
 
     const user = await getUserById(reservation.user_id);
     const newFlight = await reservationService.getFlightById(new_flight_id);
 
     // 2. Update reservation
-    await reservationService.updateReservationFlight(reservation_id, new_flight_id);
+    await reservationService.updateReservationFlight(
+      reservation_id,
+      new_flight_id
+    );
 
     // 3. Email user
     if (user && user.email) {
-      const formattedDate = new Date(newFlight.departure_time).toLocaleDateString("en-US", {
-        year: "numeric", month: "long", day: "numeric"
+      const formattedDate = new Date(
+        newFlight.departure_time
+      ).toLocaleDateString("en-US", {
+        year: "numeric",
+        month: "long",
+        day: "numeric",
       });
 
       await sendEmail({
@@ -245,7 +266,9 @@ async function updateReservationFlight(req, res) {
           <p>Hi ${user.name?.trim() || "Passenger"},</p>
           <p>Your reservation has been updated to a new flight.</p>
           <ul>
-            <li><strong>Route:</strong> ${newFlight.origin} → ${newFlight.destination}</li>
+            <li><strong>Route:</strong> ${newFlight.origin} → ${
+          newFlight.destination
+        }</li>
             <li><strong>Departure:</strong> ${formattedDate}</li>
             <li><strong>Flight ID:</strong> ${new_flight_id}</li>
           </ul>
@@ -262,4 +285,52 @@ async function updateReservationFlight(req, res) {
   }
 }
 
-export { getUserReservations, getAgentReservations, getUserByEmailHandler, cancelReservation, getAlternativeFlights, updateReservationFlight };
+async function cancelEntireFlight(req, res) {
+  const { flight_id } = req.body;
+  console.log("Body received for cancel:", req.body);
+
+  try {
+    const reservations = await reservationService.getReservationByFlight(
+      flight_id
+    );
+
+    //loop through those on the canceled flight and email them
+    for (const reservation of reservations) {
+      const user = await getUserById(reservation.user_id);
+      if (user?.email) {
+        await sendEmail({
+          to: user.email,
+          subject: "Flight Cancellation Notice",
+          html: `
+            <h3>We're sorry to inform you...</h3>
+            <p>Your flight <strong>${reservation.flight_number}</strong> (${
+            reservation.origin
+          } ➔ ${reservation.destination}) 
+            scheduled for <strong>${new Date(
+              reservation.departure_time
+            ).toLocaleString()}</strong> has been canceled.</p>
+            <p>We apologize for the inconvenience. Please contact an agent to rebook.</p>
+          `,
+        });
+      }
+      await reservationService.deleteReservationsByFlight(flight_id);
+      await flightService.cancelWholeFlight(flight_id);
+    }
+
+    await flightService.cancelFlight(flight_id);
+    res.status(200).json({ message: "Flight canceled and users notified" });
+  } catch (error) {
+    console.error("Error canceling flight:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+export {
+  getUserReservations,
+  getAgentReservations,
+  getUserByEmailHandler,
+  cancelReservation,
+  getAlternativeFlights,
+  updateReservationFlight,
+  cancelEntireFlight,
+};

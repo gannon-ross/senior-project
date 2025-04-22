@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { flightAPI } from "../services/api";
 import { useAuth } from "../context/AuthContext";
+import CancelFlightModal from "./CancelFlightModal";
 
 const Agent = () => {
   const { user } = useAuth();
@@ -9,6 +10,7 @@ const Agent = () => {
   const [targetUserId, setTargetUserId] = useState(null);
   const [error, setError] = useState("");
   const [agentFlightResults, setAgentFlightResults] = useState([]);
+  const [showCancelModal, setShowCancelModal] = useState(false);
   const [agentBooking, setAgentBooking] = useState({
     flightId: null,
     passengers: 1,
@@ -96,10 +98,17 @@ const Agent = () => {
       <h2 className="text-2xl font-bold text-gray-300 mb-4">Agent Dashboard</h2>
 
       <div className="mb-6">
-        <h3 className="text-lg font-semibold text-gray-300">
-          Total Sales: ${totalSales.toFixed(2)}
-        </h3>
-      </div>
+  <h3 className="text-lg font-semibold text-gray-300">
+    Total Sales: ${totalSales.toFixed(2)}
+  </h3>
+  <button
+    onClick={() => setShowCancelModal(true)}
+    className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded mt-4"
+  >
+    Cancel a Flight
+  </button>
+</div>
+
 
       <div className="mb-6">
         <h3 className="text-md font-semibold text-gray-300 mb-2">
@@ -171,49 +180,54 @@ const Agent = () => {
             >
               Search
             </button>
-          </div>
-
+            </div>
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {agentFlightResults.map((f) => (
-            <div key={f.id} className="bg-stone-400 text-stone-800 p-3 my-2 rounded shadow">
-              <p className="font-bold">
-                {f.origin} ➔ {f.destination}
-              </p>
-              <p className="italic">Departure: {new Date(f.departure_time).toLocaleString()}</p>
-              <p>Price: ${f.price}</p>
-              <div className="flex items-center gap-2 mt-2">
-                <p>Seats:</p>
-                <input
-                  type="number"
-                  min={1}
-                  value={
-                      agentBooking.flightId === f.id && agentBooking.passengers
-                      ? agentBooking.passengers
-                      : 1
-                  }
-                  onChange={(e) =>
-                    setAgentBooking({
-                      flightId: f.id,
-                      passengers: Number(e.target.value),
-                    })
-                  }
-                  className="w-16 px-2 py-1 border rounded"
-                />
-                <button
-                  onClick={() => {
-                    const passengers =
+            {agentFlightResults.map((f) => (
+              <div
+                key={f.id}
+                className="bg-stone-400 text-stone-800 p-3 my-2 rounded shadow"
+              >
+                <p className="font-bold">
+                  {f.origin} ➔ {f.destination}
+                </p>
+                <p className="italic">
+                  Departure: {new Date(f.departure_time).toLocaleString()}
+                </p>
+                <p>Price: ${f.price}</p>
+                <div className="flex items-center gap-2 mt-2">
+                  <p>Seats:</p>
+                  <input
+                    type="number"
+                    min={1}
+                    value={
                       agentBooking.flightId === f.id && agentBooking.passengers
                         ? agentBooking.passengers
-                        : 1;
-                    handleAgentBooking(f.id, passengers);
-                  }}
-                  className="font-bold bg-green-600 hover:bg-green-800 text-stone-800 px-3 py-1 rounded"
-                >
-                  Book
-                </button>
+                        : 1
+                    }
+                    onChange={(e) =>
+                      setAgentBooking({
+                        flightId: f.id,
+                        passengers: Number(e.target.value),
+                      })
+                    }
+                    className="w-16 px-2 py-1 border rounded"
+                  />
+                  <button
+                    onClick={() => {
+                      const passengers =
+                        agentBooking.flightId === f.id &&
+                        agentBooking.passengers
+                          ? agentBooking.passengers
+                          : 1;
+                      handleAgentBooking(f.id, passengers);
+                    }}
+                    className="font-bold bg-green-600 hover:bg-green-800 text-stone-800 px-3 py-1 rounded"
+                  >
+                    Book
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
           </div>
         </div>
       )}
@@ -223,8 +237,7 @@ const Agent = () => {
           Your Reservations
         </h3>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {reservations.map((res) => 
-            
+          {reservations.map((res) => (
             <div key={res.id} className="bg-stone-400 p-4 rounded shadow">
               <p>
                 <strong>Flight:</strong> {res.destination}
@@ -248,23 +261,31 @@ const Agent = () => {
                 {(res.price * res.passengers).toFixed(2)}
               </p>
               <div className="flex justify-center">
-                <p className="text-sm font-bold mt-2 px-2">
-                  Cancel Flight?
-                </p>
+                <p className="text-sm font-bold mt-2 px-2">Cancel Flight?</p>
                 <button
                   onClick={() => {
                     flightAPI.cancelFlight(res.id);
                     alert("Reservation cancelled!");
                     fetchAgentReservations();
                   }}
-                  className="bg-stone-600 hover:bg-stone-500 text-stone-200 px-3 py-1 rounded">
+                  className="bg-stone-600 hover:bg-stone-500 text-stone-200 px-3 py-1 rounded"
+                >
                   &times;
                 </button>
               </div>
             </div>
-          )}
+          ))}
         </div>
       </div>
+      {showCancelModal && (
+        <CancelFlightModal
+          onClose={() => setShowCancelModal(false)}
+          onCancelSuccess={() => {
+            fetchAgentReservations();
+            console.log("Flight canceled!");
+          }}
+        />
+      )}
     </div>
   );
 };

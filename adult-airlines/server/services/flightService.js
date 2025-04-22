@@ -1,14 +1,20 @@
 import { pool } from '../config/db.js';
 
 // Flexible flight search
-export async function searchFlights({flight_id, origin, destination, date}) {
-    let baseQuery = 'SELECT id, origin, destination, departure_time, arrival_time, price FROM flights WHERE 1=1';
+export async function searchFlights({flight_id, flight_number, origin, destination, date}) {
+    let baseQuery = 'SELECT id, flight_number, origin, destination, departure_time, arrival_time, price FROM flights WHERE 1=1';
     const params = [];
 
     if (flight_id) {
         baseQuery += ' AND id = ?';
         params.push(flight_id);
     }
+
+    if (flight_number) {
+        baseQuery += ' AND flight_number = ?';
+        params.push(flight_number);
+    }
+      
 
     if (origin) {
         baseQuery += ' AND origin = ?';
@@ -40,3 +46,12 @@ export async function cancelFlight({reservationId}) {
     console.log(ack);
     return ack;
 }
+
+export async function cancelWholeFlight(flight_id) {
+    const [result] = await pool.query(
+      'DELETE FROM flights WHERE id = ?',
+      [flight_id]
+    );
+    return result;
+  }
+  
