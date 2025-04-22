@@ -8,10 +8,17 @@ export async function getFlightById(flightId) {
 
 // Create the reservation
 export async function createReservation(userId, flightId, agentId = null, passengers = 1) {
-    await pool.query(
+    const [result] = await pool.query(
         'INSERT INTO reservations (user_id, flight_id, booking_time, agent_id, passengers) VALUES (?, ?, NOW(), ?, ?)',
         [userId, flightId, agentId, passengers]
     );
+
+    const [reservationRows] = await pool.query(
+        'SELECT * FROM reservations WHERE id = ?',
+        [result.insertId]
+    );
+
+    return reservationRows[0];
 }
 
 // Cancel (delete) a reservation
@@ -64,3 +71,39 @@ export async function getReservationsByAgent(agentId) {
     );
     return rows;
 }
+
+export async function findAlternativeFlights({ origin, destination, excludeFlightId }) {
+    const query = `
+      SELECT *
+      FROM flights
+      WHERE origin = ?
+        AND destination = ?
+        AND id != ?
+        AND departure_time > NOW()
+      ORDER BY departure_time ASC
+    `;
+  
+    const [rows] = await pool.query(query, [origin, destination, excludeFlightId]);
+    return rows;
+  }
+
+export async function getReservationById(reservationId) {
+    const [rows] = await pool.query(
+      `SELECT r.*, f.origin, f.destination
+       FROM reservations r
+       JOIN flights f ON r.flight_id = f.id
+       WHERE r.id = ?`,
+      [reservationId]
+    );
+    return rows;
+  }
+
+  export async function updateReservationFlight(reservationId, newFlightId) {
+    await pool.query(
+      'UPDATE reservations SET flight_id = ? WHERE id = ?',
+      [newFlightId, reservationId]
+    );
+  }
+  
+  
+  

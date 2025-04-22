@@ -22,8 +22,6 @@ const app = express();
 
 // Middleware
 app.use(cors({ origin: '*', credentials: true }));
-
-
 app.use(express.json());
 
 // Routes

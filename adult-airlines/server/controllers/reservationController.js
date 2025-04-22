@@ -56,13 +56,17 @@ export async function reserveFlight(req, res) {
       return res.status(400).json({ message: "Not enough seats available" });
     }
 
-    await reservationService.createReservation(
+    const reservation = await reservationService.createReservation(
       user_id,
       flight_id,
       agent_id,
       seats_requested
     );
     await reservationService.updateFlightSeats(flight_id, seats_requested);
+
+    const formattedBookingTime = new Date(reservation.booking_time).toLocaleString();
+    const totalPrice = flight.price * seats_requested;
+
 
     // Get user and flight info
     const user = await getUserById(user_id);
@@ -88,20 +92,19 @@ export async function reserveFlight(req, res) {
         to: user.email,
         subject: "Your Adult Airlines Booking Confirmation",
         html: `
-              <h2>✈️ Reservation Confirmed!</h2>
-              <p><strong>Passenger Name:</strong> ${
-                user.name?.trim() || "Passenger"
-              }</p>
-              <p><strong>Flight:</strong> ${flight.origin} → ${
-          flight.destination
-        }</p>
-              <p><strong>Date:</strong> ${formattedDate}</p>
-              <p><strong>Flight ID:</strong> ${flight_id}</p>
-              <p><strong>Passengers:</strong> ${seats_requested}</p>
-              <br>
-              <p>Thank you for booking with <strong>Adult Airlines</strong>!</p>
-            `,
+          <h2>✈️ Reservation Confirmed!</h2>
+          <p><strong>Passenger Name:</strong> ${user.name?.trim() || "Passenger"}</p>
+          <p><strong>Flight:</strong> ${flight.origin} → ${flight.destination}</p>
+          <p><strong>Date:</strong> ${formattedDate}</p>
+          <p><strong>Flight ID:</strong> ${flight_id}</p>
+          <p><strong>Passengers:</strong> ${seats_requested}</p>
+          <p><strong>Total Price:</strong> $${totalPrice.toFixed(2)}</p>
+          <p><strong>Booking Time:</strong> ${formattedBookingTime}</p>
+          <br>
+          <p>Thank you for booking with <strong>Adult Airlines</strong>!</p>
+        `,
       });
+      
 
       console.log("Confirmation email sent");
     } catch (emailError) {
@@ -182,4 +185,81 @@ async function cancelReservation(req, res) {
   }
 }
 
-export { getUserReservations, getAgentReservations, getUserByEmailHandler, cancelReservation };
+async function getAlternativeFlights(req, res) {
+  const { reservationId } = req.params;
+
+  try {
+    // Step 1: Get the original reservation
+    const reservationRows = await reservationService.getReservationById(reservationId);
+    const reservation = reservationRows[0];
+
+    if (!reservation) {
+      return res.status(404).json({ message: "Reservation not found" });
+    }
+    console.log("Finding alternatives for reservation ID:", reservationId);
+    console.log("Found reservation:", reservation);
+    console.log("Fetching alternatives with origin:", reservation.origin, "destination:", reservation.destination);
+
+
+
+    // Step 2: Look up flights with the same origin and destination
+    const alternatives = await reservationService.findAlternativeFlights({
+      origin: reservation.origin,
+      destination: reservation.destination,
+      excludeFlightId: reservation.flight_id,
+    });
+
+    res.status(200).json(alternatives);
+  } catch (error) {
+    console.error("Failed to fetch alternative flights:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+async function updateReservationFlight(req, res) {
+  const { reservation_id, new_flight_id } = req.body;
+
+  try {
+    // 1. Get reservation + user
+    const reservationRows = await reservationService.getReservationById(reservation_id);
+    const reservation = reservationRows[0];
+
+    if (!reservation) return res.status(404).json({ message: "Reservation not found" });
+
+    const user = await getUserById(reservation.user_id);
+    const newFlight = await reservationService.getFlightById(new_flight_id);
+
+    // 2. Update reservation
+    await reservationService.updateReservationFlight(reservation_id, new_flight_id);
+
+    // 3. Email user
+    if (user && user.email) {
+      const formattedDate = new Date(newFlight.departure_time).toLocaleDateString("en-US", {
+        year: "numeric", month: "long", day: "numeric"
+      });
+
+      await sendEmail({
+        to: user.email,
+        subject: "Flight Update Confirmation",
+        html: `
+          <h2>✈️ Your Flight Has Been Updated</h2>
+          <p>Hi ${user.name?.trim() || "Passenger"},</p>
+          <p>Your reservation has been updated to a new flight.</p>
+          <ul>
+            <li><strong>Route:</strong> ${newFlight.origin} → ${newFlight.destination}</li>
+            <li><strong>Departure:</strong> ${formattedDate}</li>
+            <li><strong>Flight ID:</strong> ${new_flight_id}</li>
+          </ul>
+          <p>Thanks for flying with Adult Airlines!</p>
+        `,
+      });
+      console.log("✅ Update email sent to:", user.email);
+    }
+
+    res.status(200).json({ message: "Flight updated successfully" });
+  } catch (error) {
+    console.error("❌ Error updating flight:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+export { getUserReservations, getAgentReservations, getUserByEmailHandler, cancelReservation, getAlternativeFlights, updateReservationFlight };

@@ -86,6 +86,20 @@ export const flightAPI = {
 
   getUserByEmail: (email) =>
     apiRequest(`/users/by-email?email=${encodeURIComponent(email)}`, 'GET', null, true),
+  
+  getAlternativeFlights: async (reservationId) => {
+    const response = await apiRequest(`/reserve/alternatives/${reservationId}`, "GET", null, true);
+    return response;
+  },
+
+  updateReservationFlight: async (reservationId, newFlightId) => {
+    const response = await apiRequest('/reserve/update-flight', 'POST', {
+      reservation_id: reservationId,
+      new_flight_id: newFlightId
+    }, true);
+    return response;
+  },
+
 }
 
 export default apiRequest;

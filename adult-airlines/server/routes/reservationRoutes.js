@@ -1,5 +1,12 @@
 import express from 'express';
-import { reserveFlight, getUserReservations, getAgentReservations, cancelReservation } from '../controllers/reservationController.js';
+import {
+    reserveFlight,
+    getUserReservations,
+    getAgentReservations,
+    cancelReservation,
+    getAlternativeFlights,
+    updateReservationFlight
+  } from '../controllers/reservationController.js';
 
 
 const router = express.Router();
@@ -12,6 +19,12 @@ router.get('/user/:userId', getUserReservations);
 router.get("/agent/:agentId", getAgentReservations);
 // Cancel reservations
 router.delete("/:reservationId", cancelReservation);
+// Get alternative flights for current reservations
+router.get("/alternatives/:reservationId", getAlternativeFlights);
+// Post the new reservation
+router.post('/update-flight', updateReservationFlight);
+// GET alternative flights
+router.get('/alternatives/:reservationId', getAlternativeFlights);
 
  
 

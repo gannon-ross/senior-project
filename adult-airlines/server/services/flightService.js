@@ -24,7 +24,9 @@ export async function searchFlights({flight_id, origin, destination, date}) {
         params.push(date);
     }
 
+    baseQuery += ' ORDER BY departure_time ASC';
     const [rows] = await pool.query(baseQuery, params);
+
     return rows;
     
 }
