@@ -188,13 +188,6 @@ async function cancelReservation(req, res) {
     const flight = await reservationService.getReservationByFlight(reservation.flight_id);
     const flightInfo = flight[0];
 
-    console.log("Reservation: ");
-    console.log(reservation);
-    console.log("Flight: ")
-    console.log(flight)
-    console.log("Flight Info: ")
-    console.log(flightInfo)
-
     // Send email
     const user = await getUserById(reservation.user_id);
     if (user?.email) {
