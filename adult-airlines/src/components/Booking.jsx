@@ -61,9 +61,18 @@ const Booking = ({ onReservationSuccess }) => {
   const handlePaymentSubmit = async (e) => {
     e.preventDefault();
 
-    const validFormat = /^\d{2}\/\d{2}$/;
-    if (!validFormat.test(formData.expiry)) {
+    // Checks credit card expiration date
+    const validExpiryFormat = /^\d{2}\/\d{2}$/;
+    if (!validExpiryFormat.test(formData.expiry)) {
       alert("Expiration must be in MM/YY format.");
+      setIsSubmitting(false);
+      return;
+    }
+
+    // Checks zip code
+    const validZIPFormat = /^\d{5}(-?\d{4})?$/;
+    if (!validZIPFormat.test(formData.zip)) {
+      alert("ZIP must follow standard ZIP or ZIP+4 format.");
       setIsSubmitting(false);
       return;
     }
@@ -118,6 +127,14 @@ const Booking = ({ onReservationSuccess }) => {
       console.error("Reservation failed:", error);
       alert("Failed to reserve flight.");
     } finally {
+      // Needs to reset form data on completion
+      setFormData({
+        payment_card: "",
+        expiry: "",
+        cvv: "",
+        name: "",
+        zip: "",
+        passengers: 1,})
       setIsSubmitting(false);
     }
   };
@@ -242,15 +259,17 @@ const Booking = ({ onReservationSuccess }) => {
                       autoComplete="off"
                       className="space-y-4"
                     >
-                      <input
-                        name="passengers"
-                        type="number"
-                        placeholder="Number of Passengers"
-                        required
-                        onChange={handlePaymentChange}
-                        value={formData.passengers}
-                        className="w-full px-3 py-2 border rounded"
-                      />
+                      <div className="flex">
+                        <p>Number of Passengers: </p>
+                        <input
+                          name="passengers"
+                          type="number"
+                          required
+                          onChange={handlePaymentChange}
+                          value={formData.passengers}
+                          className="w-full px-3 py-2 border rounded"
+                        />
+                      </div>
                       <p className="text-sm text-stone-200"></p>
 
                       <input
@@ -318,7 +337,17 @@ const Booking = ({ onReservationSuccess }) => {
                         </button>
                         <button
                           type="button"
-                          onClick={() => setShowPayment(false)}
+                          onClick={() => {
+                            setShowPayment(false)
+                            // Prevents clicking cancel, returning, and having sensitive information autofilled
+                            setFormData({
+                              payment_card: "",
+                              expiry: "",
+                              cvv: "",
+                              name: "",
+                              zip: "",
+                              passengers: 1,})
+                          }}
                           className="bg-stone-400 hover:bg-stone-500 text-gray-300 px-2 py-2 rounded"
                         >
                           Cancel

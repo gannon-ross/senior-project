@@ -180,7 +180,45 @@ async function cancelReservation(req, res) {
   const { reservationId } = req.params;
 
   try {
+    // Get reservation object to pass into email params
+    const reservationRows = await reservationService.getReservationById(
+      reservationId
+    );
+    const reservation = reservationRows[0];
+    const flight = await reservationService.getReservationByFlight(reservation.flight_id);
+    const flightInfo = flight[0];
+
+    console.log("Reservation: ");
+    console.log(reservation);
+    console.log("Flight: ")
+    console.log(flight)
+    console.log("Flight Info: ")
+    console.log(flightInfo)
+
+    // Send email
+    const user = await getUserById(reservation.user_id);
+    if (user?.email) {
+      await sendEmail({
+        to: user.email,
+        subject: "Your Reservation Has Been Canceled",
+        html: `
+          <h3>Hello, ${user.name}!</h3>
+          <p>You have canceled your reservation regarding flight <strong>${flightInfo.flight_number}</strong> (${
+            flightInfo.origin
+        } ➔ ${flightInfo.destination}) 
+          scheduled for <strong>${new Date(
+            flightInfo.departure_time
+          ).toLocaleString()}</strong>.</p>
+          <p>We're sorry to see you go.</p>
+          <p>If this was done in error, please contact an agent at your convenience.</p>
+          <p>We would be glad to assist you.</p>
+        `,
+      });
+    }
+
+    // Cancel on backend (email won't work if done as first step: can't see a reservation that doesn't exist anymore)
     await reservationService.cancelReservationById(reservationId);
+
     res
       .status(200)
       .json({ message: `Reservation ${reservationId} cancelled succesfully` });

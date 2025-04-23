@@ -52,8 +52,8 @@ const MyReservations = ({ refreshKey }) => {
               <button
                 onClick={() => {
                   flightAPI.cancelFlight(res.reservation_id);
-                  fetchReservations();
                   alert(`Reservation cancelled!`);
+                  fetchReservations();
                 }}
                 className="bg-stone-600 hover:bg-stone-500 text-stone-200 px-3 py-1 rounded"
               >
