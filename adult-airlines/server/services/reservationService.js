@@ -62,7 +62,7 @@ export async function getReservationsByUser(userId) {
   
 export async function getReservationsByAgent(agentId) {
     const [rows] = await pool.query(
-        `Select r.*, f.destination, f.departure_time, f.arrival_time, f.aircraft_model, f.price
+        `Select r.*, f.destination, f.departure_time, f.arrival_time, f.aircraft_model, f.price, f.flight_number
         FROM reservations r
         Join flights f ON r.flight_id = f.id
         WHERE r.agent_id = ?

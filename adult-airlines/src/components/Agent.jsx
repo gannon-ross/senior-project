@@ -239,6 +239,7 @@ const Agent = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {reservations.map((res) => (
             <div key={res.id} className="bg-stone-400 p-4 rounded shadow">
+              <p><strong>Flight #:</strong> {res.flight_number}</p>
               <p>
                 <strong>Flight:</strong> {res.destination}
               </p>
